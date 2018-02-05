@@ -1,0 +1,19 @@
+services:
+- docker
+
+script:
+- export RUST_CHANNEL="nightly"
+- if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  fi
+- docker build -t $DOCKER_USERNAME/rustfmt-clippy --build-arg RUST_CHANNEL=${RUST_CHANNEL} .
+- export RUST_DATE=$(docker run -it $DOCKER_USERNAME/rustfmt-clippy rustc --version | grep -oE "[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}")
+- export TAG="${RUST_CHANNEL}-${RUST_DATE}"
+after_success: |
+  if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then
+    docker push $DOCKER_USERNAME/rustfmt-clippy
+    docker tag $DOCKER_USERNAME/rustfmt-clippy $DOCKER_USERNAME/rustfmt-clippy:$TAG
+  fi
+branches:
+  only:
+  - master
