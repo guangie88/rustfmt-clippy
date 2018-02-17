@@ -1,8 +1,8 @@
 FROM ubuntu:xenial
 
 ARG RUST_CHANNEL=nightly
-ARG RUSTFMT_REV="--branch master"
-ARG CLIPPY_REV="--branch master"
+ARG RUSTFMT_REV="-b master"
+ARG CLIPPY_REV="-b master"
 ARG BIN_PATH=/usr/local/bin
 ARG CARGO_ROOT_BIN_PATH=/root/.cargo/bin
 
@@ -21,8 +21,23 @@ RUN set -x \
     --yes \
     --disable-sudo \
     --channel=${RUST_CHANNEL} \
-    && cargo install cargo-fmt git-rustfmt rustfmt-bin rustfmt-format-diff -f --git https://github.com/rust-lang-nursery/rustfmt.git ${RUSTFMT_REV} \
-    && cargo install clippy --git https://github.com/rust-lang-nursery/rust-clippy.git ${CLIPPY_REV} \
+    && rustc --version \
+    && cargo --version \
+    && git clone https://github.com/rust-lang-nursery/rustfmt.git ${RUSTFMT_REV} \
+    && cd rustfmt \
+    && git rev-parse HEAD \
+    && cargo install -f --path cargo-fmt \
+    && cargo install -f --path git-rustfmt \
+    && cargo install -f --path rustfmt-bin \
+    && cargo install -f --path rustfmt-format-diff \
+    && cd .. \
+    && rm -rf rustfmt \
+    && git clone https://github.com/rust-lang-nursery/rust-clippy.git ${CLIPPY_REV} \
+    && cd rust-clippy \
+    && git rev-parse HEAD \
+    && cargo install \
+    && cd .. \
+    && rm -rf rust-clippy \ 
     && mv ${CARGO_ROOT_BIN_PATH}/* ${BIN_PATH} \
     && apt-get remove -y --auto-remove curl \
     && apt-get clean \
