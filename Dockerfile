@@ -42,6 +42,6 @@ RUN set -x \
     && apt-get remove -y --auto-remove curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && rm -rf /root/.cargo/git
+    && rm -rf /root/.cargo
 
 WORKDIR /volume
