@@ -11,12 +11,15 @@ RUN set -x \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
-    curl \
-    libcurl3 \
     git \
     file \
     libssl-dev \
+    curl \
+    libcurl3 \
+    libpq-dev \
     pkg-config \
+    libsqlite3-dev \
+    zlib1g-dev \
     && curl https://static.rust-lang.org/rustup.sh | sh -s -- \
     --yes \
     --disable-sudo \
