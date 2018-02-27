@@ -26,12 +26,12 @@ RUN set -x \
     --channel=${RUST_CHANNEL} \
     && rustc --version \
     && cargo --version \
-    && git clone https://github.com/rust-lang-nursery/rustfmt.git ${RUSTFMT_REV} \
-    && cd rustfmt \
+    && git clone https://github.com/rust-lang-nursery/rustfmt-bin.git ${RUSTFMT_REV} \
+    && cd rustfmt-bin \
     && git rev-parse HEAD \
     && cargo install --path . \
     && cd .. \
-    && rm -rf rustfmt \
+    && rm -rf rustfmt-bin \
     && git clone https://github.com/rust-lang-nursery/rust-clippy.git ${CLIPPY_REV} \
     && cd rust-clippy \
     && git rev-parse HEAD \
