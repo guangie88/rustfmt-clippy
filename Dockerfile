@@ -29,16 +29,13 @@ RUN set -x \
     && git clone https://github.com/rust-lang-nursery/rustfmt.git ${RUSTFMT_REV} \
     && cd rustfmt \
     && git rev-parse HEAD \
-    && cargo install -f --path cargo-fmt \
-    && cargo install -f --path git-rustfmt \
-    && cargo install -f --path rustfmt-bin \
-    && cargo install -f --path rustfmt-format-diff \
+    && cargo install --path . \
     && cd .. \
     && rm -rf rustfmt \
     && git clone https://github.com/rust-lang-nursery/rust-clippy.git ${CLIPPY_REV} \
     && cd rust-clippy \
     && git rev-parse HEAD \
-    && cargo install \
+    && cargo install --path . \
     && cd .. \
     && rm -rf rust-clippy \ 
     && mv ${CARGO_ROOT_BIN_PATH}/* ${BIN_PATH} \
