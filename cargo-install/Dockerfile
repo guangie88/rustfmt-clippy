@@ -24,7 +24,7 @@ RUN set -ux \
     --channel=${RUST_CHANNEL} \
     && rustc --version \
     && cargo --version \
-    && cargo install -f rustfmt \
+    && cargo install -f rustfmt-nightly \
     && cargo install -f clippy \
     && mv ${CARGO_HOME}/bin/* ${BIN_PATH} \
     && apt-get remove -y --auto-remove curl \
