@@ -1,20 +1,49 @@
-services:
-- docker
+matrix:
+  include:
+  - services: docker
+    env:
+    # this uses cargo install rustfmt and clippy
+    - RUST_CHANNEL=nightly
+    - PROJECT_NAME=rustfmt-clippy
+    - CARGO_INSTALL=true
+    - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME
+    - DOCKERFILE_DIR=cargo-install/
+  - services: docker
+    env:
+    # this uses git master branch from rustfmt and rust-clippy instead
+    - RUST_CHANNEL=nightly
+    - PROJECT_NAME=rustfmt-clippy
+    - CARGO_INSTALL=false
+    - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME-git-master
+    - DOCKERFILE_DIR=git-install/
 
-script:
-- export RUST_CHANNEL="nightly"
-- if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then
+before_script:
+- set -e
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   fi
-- docker build -t $DOCKER_USERNAME/rustfmt-clippy --build-arg RUST_CHANNEL=${RUST_CHANNEL} .
-- export RUST_DATE=$(docker run -it $DOCKER_USERNAME/rustfmt-clippy rustc --version | grep -oE "[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}")
-- export TAG="${RUST_CHANNEL}-${RUST_DATE}"
 
-after_success: |
-  if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then
-    docker push $DOCKER_USERNAME/rustfmt-clippy
-    docker tag $DOCKER_USERNAME/rustfmt-clippy $DOCKER_USERNAME/rustfmt-clippy:$TAG
-    docker push $DOCKER_USERNAME/rustfmt-clippy:$TAG
+script:
+- docker build -t $IMAGE_NAME --build-arg RUST_CHANNEL=$RUST_CHANNEL
+    $DOCKERFILE_DIR
+
+after_success:
+# left out of if-statement to test commands even in PRs
+- export RUST_DATE=$(docker run -it $IMAGE_NAME rustc --version |
+    grep -oE "[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}")
+- export RUST_VER=$(docker run -it $IMAGE_NAME rustc --version |
+    grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]")
+- export TAG1="$RUST_VER-$RUST_CHANNEL"
+- export TAG2="$RUST_CHANNEL-$RUST_DATE"
+- export TAG3="$RUST_CHANNEL"
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+    docker push $IMAGE_NAME;
+    docker tag $IMAGE_NAME $IMAGE_NAME:$TAG1;
+    docker push $IMAGE_NAME:$TAG1;
+    docker tag $IMAGE_NAME $IMAGE_NAME:$TAG2;
+    docker push $IMAGE_NAME:$TAG2;
+    docker tag $IMAGE_NAME $IMAGE_NAME:$TAG3;
+    docker push $IMAGE_NAME:$TAG3;
   fi
 
 branches:

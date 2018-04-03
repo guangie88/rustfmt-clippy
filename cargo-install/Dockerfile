@@ -1,12 +1,10 @@
 FROM ubuntu:xenial
 
 ARG RUST_CHANNEL=nightly
-ARG RUSTFMT_REV="-b master"
-ARG CLIPPY_REV="-b master"
 ARG BIN_PATH=/usr/local/bin
-ARG CARGO_ROOT_BIN_PATH=/root/.cargo/bin
+ARG CARGO_HOME=/root/.cargo
 
-RUN set -x \
+RUN set -ux \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     build-essential \
@@ -26,22 +24,12 @@ RUN set -x \
     --channel=${RUST_CHANNEL} \
     && rustc --version \
     && cargo --version \
-    && git clone https://github.com/rust-lang-nursery/rustfmt.git ${RUSTFMT_REV} \
-    && cd rustfmt \
-    && git rev-parse HEAD \
-    && cargo install -f --path . \
-    && cd .. \
-    && rm -rf rustfmt \
-    && git clone https://github.com/rust-lang-nursery/rust-clippy.git ${CLIPPY_REV} \
-    && cd rust-clippy \
-    && git rev-parse HEAD \
-    && cargo install --path . \
-    && cd .. \
-    && rm -rf rust-clippy \ 
-    && mv ${CARGO_ROOT_BIN_PATH}/* ${BIN_PATH} \
+    && cargo install -f rustfmt \
+    && cargo install -f clippy \
+    && mv ${CARGO_HOME}/bin/* ${BIN_PATH} \
     && apt-get remove -y --auto-remove curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && rm -rf /root/.cargo
+    && rm -rf ${CARGO_HOME}
 
 WORKDIR /volume
