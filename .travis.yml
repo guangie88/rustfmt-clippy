@@ -18,7 +18,7 @@ matrix:
     - DOCKERFILE_DIR=git-install/
 
 before_script:
-- set -euo pipefail
+- set -e
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   fi
