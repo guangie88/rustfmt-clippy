@@ -7,6 +7,7 @@ matrix:
     - PROJECT_NAME=rustfmt-clippy
     - CARGO_INSTALL=true
     - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME
+    - TAG_SUFFIX=
     - DOCKERFILE_DIR=cargo-install/
   - services: docker
     env:
@@ -14,7 +15,8 @@ matrix:
     - RUST_CHANNEL=nightly
     - PROJECT_NAME=rustfmt-clippy
     - CARGO_INSTALL=false
-    - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME-git-master
+    - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME
+    - TAG_SUFFIX=-git
     - DOCKERFILE_DIR=git-install/
 
 before_script:
@@ -33,11 +35,16 @@ after_success:
     grep -oE "[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}")
 - export RUST_VER=$(docker run -it $IMAGE_NAME rustc --version |
     grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]")
-- export TAG1="$RUST_VER-$RUST_CHANNEL"
-- export TAG2="$RUST_CHANNEL-$RUST_DATE"
-- export TAG3="$RUST_CHANNEL"
+- export TAG1="$RUST_VER-$RUST_CHANNEL$TAG_SUFFIX"
+- export TAG2="$RUST_CHANNEL-$RUST_DATE$TAG_SUFFIX"
+- export TAG3="$RUST_CHANNEL$TAG_SUFFIX"
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-    docker push $IMAGE_NAME;
+    if [ "$CARGO_INSTALL" = "true" ]; then
+      docker push $IMAGE_NAME;
+    else
+      docker tag $IMAGE_NAME $IMAGE_NAME:git;
+      docker push $IMAGE_NAME:git; 
+    fi
     docker tag $IMAGE_NAME $IMAGE_NAME:$TAG1;
     docker push $IMAGE_NAME:$TAG1;
     docker tag $IMAGE_NAME $IMAGE_NAME:$TAG2;
