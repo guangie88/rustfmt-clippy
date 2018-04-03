@@ -3,10 +3,10 @@
 Includes two Dockerfiles to include rustc, cargo, rustfmt and clippy, meant to
 be executable for any user. Both Dockerfiles are based on `ubuntu:xenial`.
 
-The non-suffixed `git-master` image performs `cargo install rustfmt` and
-`cargo install clippy`. The suffixed `git-master` image performs `git clone` for
-both `rustfmt` and `rust-clippy` at `master` branch, and performs compilation
-and installation from there.
+The non-suffixed `git-master` image performs `cargo install rustfmt-nightly`
+and `cargo install clippy`. The suffixed `git-master` image performs
+`git clone` for both `rustfmt` and `rust-clippy` at `master` branch, and
+performs compilation and installation from there.
 
 Periodically run by CI to automatically push valid Docker images into the
 [Docker registry](https://hub.docker.com/r/guangie88/rustfmt-clippy).
