@@ -21,7 +21,8 @@ matrix:
 
 before_script:
 - set -e
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+- |
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   fi
 
@@ -38,7 +39,8 @@ after_success:
 - export TAG1="$RUST_VER-$RUST_CHANNEL$TAG_SUFFIX"
 - export TAG2="$RUST_CHANNEL-$RUST_DATE$TAG_SUFFIX"
 - export TAG3="$RUST_CHANNEL$TAG_SUFFIX"
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+- |
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     if [ "$CARGO_INSTALL" = "true" ]; then
       docker push $IMAGE_NAME;
     else
