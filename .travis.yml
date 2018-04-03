@@ -24,15 +24,14 @@ before_script:
   fi
 
 script:
-- docker build -t $IMAGE_NAME --build-arg RUST_CHANNEL=$RUST_CHANNEL $DOCKERFILE_DIR
+- docker build -t $IMAGE_NAME --build-arg RUST_CHANNEL=$RUST_CHANNEL \
+    $DOCKERFILE_DIR
 
 after_success:
 # left out of if-statement to test commands even in PRs
-- >-
-  export RUST_DATE=$(docker run -it $IMAGE_NAME rustc --version |
+- export RUST_DATE=$(docker run -it $IMAGE_NAME rustc --version | \
     grep -oE "[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}")
-- >-
-  export RUST_VER=$(docker run -it $IMAGE_NAME rustc --version |
+- export RUST_VER=$(docker run -it $IMAGE_NAME rustc --version | \ 
     grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]")
 - export TAG1="$RUST_VER-$RUST_CHANNEL"
 - export TAG2="$RUST_CHANNEL-$RUST_DATE"
