@@ -24,10 +24,7 @@ before_script:
   fi
 
 script:
-- >-
-  docker build
-    -t $IMAGE_NAME
-    --build-arg RUST_CHANNEL=$RUST_CHANNEL $DOCKERFILE_DIR
+- docker build -t $IMAGE_NAME --build-arg RUST_CHANNEL=$RUST_CHANNEL $DOCKERFILE_DIR
 
 after_success:
 # left out of if-statement to test commands even in PRs
