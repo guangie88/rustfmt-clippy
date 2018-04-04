@@ -1,23 +1,23 @@
 language: bash
 
+env:
+  global:
+  - RUST_CHANNEL=nightly
+  - PROJECT_NAME=rustfmt-clippy
+  - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME
+
 matrix:
   include:
   - services: docker
     env:
     # this uses cargo install rustfmt and clippy
-    - RUST_CHANNEL=nightly
-    - PROJECT_NAME=rustfmt-clippy
     - CARGO_INSTALL=true
-    - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME
     - TAG_SUFFIX=
     - DOCKERFILE_DIR=cargo-install/
   - services: docker
     env:
     # this uses git master branch from rustfmt and rust-clippy instead
-    - RUST_CHANNEL=nightly
-    - PROJECT_NAME=rustfmt-clippy
     - CARGO_INSTALL=false
-    - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME
     - TAG_SUFFIX=-git
     - DOCKERFILE_DIR=git-install/
 
