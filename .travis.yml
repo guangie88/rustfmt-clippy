@@ -1,3 +1,5 @@
+language: bash
+
 matrix:
   include:
   - services: docker
@@ -43,9 +45,6 @@ after_success:
   if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     if [ "$CARGO_INSTALL" = "true" ]; then
       docker push $IMAGE_NAME;
-    else
-      docker tag $IMAGE_NAME $IMAGE_NAME:git;
-      docker push $IMAGE_NAME:git; 
     fi
     docker tag $IMAGE_NAME $IMAGE_NAME:$TAG1;
     docker push $IMAGE_NAME:$TAG1;
