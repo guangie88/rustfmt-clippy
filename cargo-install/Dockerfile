@@ -13,7 +13,7 @@ RUN set -ux \
     file \
     libssl-dev \
     curl \
-    libcurl3 \
+    libcurl4 \
     libpq-dev \
     libmysqlclient-dev \
     pkg-config \
