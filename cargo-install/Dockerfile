@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 
 ARG RUST_CHANNEL=nightly
 ARG BIN_PATH=/usr/local/bin
@@ -13,8 +13,9 @@ RUN set -ux \
     file \
     libssl-dev \
     curl \
-    libcurl3 \
+    libcurl4 \
     libpq-dev \
+    libmysqlclient-dev \
     pkg-config \
     libsqlite3-dev \
     zlib1g-dev \

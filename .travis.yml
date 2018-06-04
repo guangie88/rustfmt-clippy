@@ -20,6 +20,19 @@ matrix:
     - CARGO_INSTALL=false
     - TAG_SUFFIX=-git
     - DOCKERFILE_DIR=git-install/
+  allow_failures:
+  - services: docker
+    env:
+    # this uses cargo install rustfmt and clippy
+    - CARGO_INSTALL=true
+    - TAG_SUFFIX=
+    - DOCKERFILE_DIR=cargo-install/
+  - services: docker
+    env:
+    # this uses git master branch from rustfmt and rust-clippy instead
+    - CARGO_INSTALL=false
+    - TAG_SUFFIX=-git
+    - DOCKERFILE_DIR=git-install/
 
 before_script:
 - set -e
