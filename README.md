@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Includes two Dockerfiles to include rustc, cargo, rustfmt and clippy, meant to
-be executable for any user. Both Dockerfiles are based on `ubuntu:xenial`.
+be executable for any user. Both Dockerfiles are based on `ubuntu:bionic`.
 
 The non-suffixed `-git` tagged image performs `cargo install rustfmt-nightly`
 and `cargo install clippy`. The suffixed `-git` tagged image performs
@@ -47,7 +47,8 @@ tag.
 ## Development libraries included for both set-ups
 
 * `libssl-dev`
-* `libcurl3`
+* `libcurl4`
 * `libpq-dev`
+* `libmysqlclient-dev`
 * `libsqlite3-dev`
 * `zlib1g-dev`
