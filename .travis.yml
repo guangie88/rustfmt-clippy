@@ -7,7 +7,7 @@ env:
   - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME
 
 matrix:
-  include:
+  allow_failures:
   - services: docker
     env:
     # this uses cargo install rustfmt and clippy
