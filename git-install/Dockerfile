@@ -36,7 +36,7 @@ RUN set -ux \
     && git clone https://github.com/rust-lang-nursery/rust-clippy.git ${CLIPPY_REV} \
     && cd rust-clippy \
     && git rev-parse HEAD \
-    && cargo install --path . \
+    && cargo install -f --path . \
     && cd .. \
     && rm -rf rust-clippy \ 
     && mv ${CARGO_HOME}/bin/* ${BIN_PATH} \
