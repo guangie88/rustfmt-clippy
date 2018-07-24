@@ -3,8 +3,10 @@ FROM ubuntu:bionic
 ARG RUST_CHANNEL=nightly
 ARG RUSTFMT_REV="-b master"
 ARG CLIPPY_REV="-b master"
-ARG BIN_PATH=/usr/local/bin
-ARG CARGO_HOME=/root/.cargo
+
+ENV CARGO_HOME=/opt/.cargo
+ENV RUSTUP_HOME=/opt/.rustup
+ENV PATH=${CARGO_HOME}/bin:${PATH}
 
 RUN set -ux \
     && apt-get update \
@@ -21,10 +23,8 @@ RUN set -ux \
     pkg-config \
     libsqlite3-dev \
     zlib1g-dev \
-    && curl https://static.rust-lang.org/rustup.sh | sh -s -- \
-    --yes \
-    --disable-sudo \
-    --channel=${RUST_CHANNEL} \
+    && curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path \
+    --default-toolchain ${RUST_CHANNEL} \
     && rustc --version \
     && cargo --version \
     && git clone https://github.com/rust-lang-nursery/rustfmt.git ${RUSTFMT_REV} \
@@ -42,7 +42,8 @@ RUN set -ux \
     && mv ${CARGO_HOME}/bin/* ${BIN_PATH} \
     && apt-get remove -y --auto-remove curl \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && rm -rf ${CARGO_HOME}
+    && rm ${CARGO_HOME}/bin/rustup \
+    && rm -rf ${CARGO_HOME}/registry/* \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /volume
