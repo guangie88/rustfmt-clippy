@@ -9,14 +9,18 @@ export RUST_DATE=$(docker run -it $IMAGE_NAME rustc --version |
 export RUST_VER=$(docker run -it $IMAGE_NAME rustc --version |
     grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]")
 
-TAG1="$RUST_VER-$RUST_CHANNEL"
-TAG2="$RUST_CHANNEL-$RUST_DATE"
-TAG3="$RUST_CHANNEL"
-
 docker push $IMAGE_NAME
+
+TAG1="$RUST_VER-$RUST_CHANNEL"
 docker tag $IMAGE_NAME $IMAGE_NAME:$TAG1
 docker push $IMAGE_NAME:$TAG1
+
+TAG2="$RUST_CHANNEL"
 docker tag $IMAGE_NAME $IMAGE_NAME:$TAG2
 docker push $IMAGE_NAME:$TAG2
-docker tag $IMAGE_NAME $IMAGE_NAME:$TAG3
-docker push $IMAGE_NAME:$TAG3
+
+if [ "$RUST_CHANNEL" = "nightly" ]; then
+    TAG3="$RUST_CHANNEL-$RUST_DATE"
+    docker tag $IMAGE_NAME $IMAGE_NAME:$TAG3
+    docker push $IMAGE_NAME:$TAG3
+fi 
