@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM debian:stretch-slim
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG RUST_CHANNEL=stable
@@ -15,15 +15,15 @@ RUN set -eu && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         build-essential \
         ca-certificates \
-        git \
-        file \
-        libssl-dev \
         curl \
-        libcurl4 \
+        default-libmysqlclient-dev \
+        file \
+        git \
+        libcurl4-openssl-dev \
         libpq-dev \
-        libmysqlclient-dev \
-        pkg-config \
+        libssl-dev \
         libsqlite3-dev \
+        pkg-config \
         zlib1g-dev \
         ; \
     curl https://sh.rustup.rs -sSf | \

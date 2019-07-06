@@ -2,7 +2,6 @@ language: bash
 
 env:
   global:
-  - RUST_CHANNEL=nightly
   - PROJECT_NAME=rustfmt-clippy
   - IMAGE_NAME=$DOCKER_USERNAME/$PROJECT_NAME
 
@@ -10,62 +9,26 @@ matrix:
   include:
   - services: docker
     env:
-    # this uses cargo install rustfmt and clippy
-    - CARGO_INSTALL=true
-    - TAG_SUFFIX=
-    - DOCKERFILE_DIR=cargo-install/
+    - RUST_CHANNEL=stable
   - services: docker
     env:
-    # this uses git master branch from rustfmt and rust-clippy instead
-    - CARGO_INSTALL=false
-    - TAG_SUFFIX=-git
-    - DOCKERFILE_DIR=git-install/
+    - RUST_CHANNEL=beta
+  - services: docker
+    env:
+    - RUST_CHANNEL=nightly
   allow_failures:
   - services: docker
     env:
-    # this uses cargo install rustfmt and clippy
-    - CARGO_INSTALL=true
-    - TAG_SUFFIX=
-    - DOCKERFILE_DIR=cargo-install/
-  - services: docker
-    env:
-    # this uses git master branch from rustfmt and rust-clippy instead
-    - CARGO_INSTALL=false
-    - TAG_SUFFIX=-git
-    - DOCKERFILE_DIR=git-install/
-
-before_script:
-- set -e
-- |
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  fi
+    - RUST_CHANNEL=nightly
 
 script:
-- docker build -t $IMAGE_NAME --build-arg RUST_CHANNEL=$RUST_CHANNEL
-    $DOCKERFILE_DIR
+- docker build -t $IMAGE_NAME --build-arg RUST_CHANNEL=$RUST_CHANNEL .
 
-after_success:
-# left out of if-statement to test commands even in PRs
-- export RUST_DATE=$(docker run -it $IMAGE_NAME rustc --version |
-    grep -oE "[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}")
-- export RUST_VER=$(docker run -it $IMAGE_NAME rustc --version |
-    grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]")
-- export TAG1="$RUST_VER-$RUST_CHANNEL$TAG_SUFFIX"
-- export TAG2="$RUST_CHANNEL-$RUST_DATE$TAG_SUFFIX"
-- export TAG3="$RUST_CHANNEL$TAG_SUFFIX"
-- |
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-    if [ "$CARGO_INSTALL" = "true" ]; then
-      docker push $IMAGE_NAME;
-    fi
-    docker tag $IMAGE_NAME $IMAGE_NAME:$TAG1;
-    docker push $IMAGE_NAME:$TAG1;
-    docker tag $IMAGE_NAME $IMAGE_NAME:$TAG2;
-    docker push $IMAGE_NAME:$TAG2;
-    docker tag $IMAGE_NAME $IMAGE_NAME:$TAG3;
-    docker push $IMAGE_NAME:$TAG3;
-  fi
+deploy:
+  provider: script
+  script: bash push-images.sh
+  on:
+    branch: master
 
 branches:
   only:

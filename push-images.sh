@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
+export RUST_DATE=$(docker run -it $IMAGE_NAME rustc --version |
+    grep -oE "[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2}")
+
+export RUST_VER=$(docker run -it $IMAGE_NAME rustc --version |
+    grep -oE "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]")
+
+TAG1="$RUST_VER-$RUST_CHANNEL"
+TAG2="$RUST_CHANNEL-$RUST_DATE"
+TAG3="$RUST_CHANNEL"
+
+docker push $IMAGE_NAME
+docker tag $IMAGE_NAME $IMAGE_NAME:$TAG1
+docker push $IMAGE_NAME:$TAG1
+docker tag $IMAGE_NAME $IMAGE_NAME:$TAG2
+docker push $IMAGE_NAME:$TAG2
+docker tag $IMAGE_NAME $IMAGE_NAME:$TAG3
+docker push $IMAGE_NAME:$TAG3
