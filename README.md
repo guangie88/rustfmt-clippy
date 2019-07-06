@@ -13,6 +13,23 @@ builds for all three toolchains, `stable`, `beta` and `nightly`.
 
 Note that the underlying distribution is currently Debian based.
 
+## How to use
+
+The designated directory for the Rust project directory is `/volume`.
+
+Assuming your current `pwd` is at the desired Rust project directory to build:
+
+```bash
+docker run --rm -it -v `pwd`:/volume -u `id -u`:`id -g` guangie88/rustfmt-clippy:stable cargo fmt
+docker run --rm -it -v `pwd`:/volume -u `id -u`:`id -g` guangie88/rustfmt-clippy:stable cargo clippy
+docker run --rm -it -v `pwd`:/volume -u `id -u`:`id -g` guangie88/rustfmt-clippy:stable cargo build
+```
+
+The above runs various cargo subcommands as your current host user, and saves
+the Cargo cache within `.cargo` in your Rust project directory. You should
+put `.cargo` into your `.gitignore` if you are planning to frequently use this
+Docker image for your development.
+
 ## Executables included
 
 - `cargo` and `rustc`
