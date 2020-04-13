@@ -1,0 +1,25 @@
+on:
+  push:
+    branches:
+      - master
+
+name: Build and push to Docker Hub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Publish Stable to Registry
+        uses: elgohr/Publish-Docker-Github-Action@2.13
+        env:
+          RUST_CHANNEL: stable
+        with:
+          name: passfort/rust-clippy-audit
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          snapshot: true
+          buildargs: RUST_CHANNEL

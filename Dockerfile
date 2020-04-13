@@ -31,6 +31,7 @@ RUN set -eu && \
     rustup component add rustfmt clippy; \
     rustc --version; \
     cargo --version; \
+    cargo install cargo-audit; \
     apt-get remove -y --auto-remove curl; \
     apt-get clean; \
     rm ${CARGO_HOME}/bin/rustup; \
